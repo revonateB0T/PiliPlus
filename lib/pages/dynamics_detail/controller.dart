@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:PiliPlus/common/widgets/scroll_physics.dart' show ReloadMixin;
 import 'package:PiliPlus/http/dynamics.dart';
 import 'package:PiliPlus/http/loading_state.dart';
 import 'package:PiliPlus/http/reply.dart';
@@ -7,7 +10,9 @@ import 'package:PiliPlus/utils/id_utils.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:get/get.dart';
 
-class DynamicDetailController extends CommonDynController {
+class DynamicDetailController extends CommonDynController with ReloadMixin {
+  DynamicDetailController({super.count});
+
   @override
   late int oid;
   @override
@@ -66,11 +71,17 @@ class DynamicDetailController extends CommonDynController {
       action: action,
     );
     if (res.isSuccess) {
-      Future.delayed(const Duration(milliseconds: 500), () {
+      Timer(const Duration(milliseconds: 500), () {
         if (!isClosed) {
           onReload();
         }
       });
     }
+  }
+
+  @override
+  Future<void> onReload() {
+    reload = true;
+    return super.onReload();
   }
 }
